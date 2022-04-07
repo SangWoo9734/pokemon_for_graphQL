@@ -1,4 +1,25 @@
 //color of type
+export const TYPE = [
+  "NORMAL",
+  "FIRE",
+  "WATER",
+  "ELECTRIC",
+  "GRASS",
+  "FAIRY",
+  "ICE",
+  "FIGHTING",
+  "POISON",
+  "GROUND",
+  "FLYING",
+  "PSYCHIC",
+  "BUG",
+  "ROCK",
+  "GHOST",
+  "DRAGON",
+  "DARK",
+  "STEEL",
+];
+
 export const colorOfType = (type: string) => {
   switch (type) {
     case "NORMAL":
