@@ -6,8 +6,9 @@ import { Pokemon, PokemonSpecies } from "../../assets/type";
 import * as S from "./style";
 import Loading from "../../components/Loading";
 import PokemonCard from "../../components/PokemonCard";
+import SortPokemon from "../../components/SortPokemon";
 
-const SAMPLE_QUERY = gql`
+const POKEMON_LIST_QUERY = gql`
   query samplePokeAPIquery {
     pokemon_v2_pokemon {
       id
@@ -73,7 +74,7 @@ interface ResponseType {
 }
 
 function Home() {
-  const { loading, data }: ResponseType = useQuery(SAMPLE_QUERY);
+  const { loading, data }: ResponseType = useQuery(POKEMON_LIST_QUERY);
   const [pokemon, setPokemon] = useState<Pokemon[]>([]);
   const [totalPokemon, setTotalPokemon] = useState<number>(0);
   const [page, setPage] = useState<number>(3);
@@ -91,8 +92,10 @@ function Home() {
       {!loading && pokemon && (
         <div>
           <S.Title>Pokedex</S.Title>
+          <S.SubTitle> -- All About POKEMON -- </S.SubTitle>
+          <SortPokemon />
           <S.PokemonList>
-            {pokemon.slice(0, 33 * page).map((data, index) => {
+            {pokemon.slice(0, 33 * page).map((data) => {
               return <PokemonCard pokemonInfo={data} key={data.id} />;
             })}
           </S.PokemonList>
