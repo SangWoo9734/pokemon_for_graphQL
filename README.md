@@ -1,46 +1,91 @@
-# Getting Started with Create React App
+#### 🕹 [배포 페이지 바로가기](https://pokemon-for-graph-ql.vercel.app/)
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## 기술 스택
 
-## Available Scripts
+<p>
+  <img src="https://img.shields.io/badge/Typescript-3178C6?style=for-the-badge&logo=TypeScript&logoColor=white" />
+  <img src="https://img.shields.io/badge/react-%2320232a.svg?style=for-the-badge&logo=react&logoColor=%2361DAFB" />
+  <img src="https://img.shields.io/badge/styled--components-DB7093?style=for-the-badge&logo=styled-components&logoColor=white" />
+  <img src="https://img.shields.io/badge/react--icons-brightgreen?style=for-the-badge" />
+  <img src="https://img.shields.io/badge/react--router--dom-CA4245?style=for-the-badge&logo=React-Router&logoColor=white" />
+  <img src="https://img.shields.io/badge/GraphQL-E10098?style=for-the-badge&logo=GraphQL&logoColor=white" />
+</p>
 
-In the project directory, you can run:
+## 프로젝트 시작
 
-### `npm start`
+#### `npm install`
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+프로젝트와 관련된 의존성을 모두 설치합니다.
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+#### `npm start`
 
-### `npm test`
+개발 모드로 앱을 시작할 수 있습니다.
+명령어 입력 후, [http://localhost:3000](http://localhost:3000)를 입력하여 브라우저에서 확인 가능합니다.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## GraphQL
+- 기존의 REST API의 단점을 보완한 데이터 전송 형식
 
-### `npm run build`
+#### *REST API 단점*
+- 원하는 데이터보다 더 많은 데이터를 받아야 한다. (Overfetching)  
+- 원하는 데이터가 여러 EndPoint에 흩어져 있다. (Underfetching) 
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+실제 Pokemon REST API에서도 이러한 단점을 느낄 수 있었습니다.
+메인 Pokemon Card에 필요한 데이터는 이름, 순서, 타입 정도인데, REST API에서는 샤용하지 않을 데이터를 너무 많이 포함하고 있었습니다.  
+![rest](https://user-images.githubusercontent.com/49917043/162118079-0c2a304b-12c4-4963-9784-5f8811940645.gif)  
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+그리고 상세 페이지에 포함할 진화과정에 대한 Endpoint가 다른 Endpoint로 정의되어 있어서 2회 이상 API 통신을 해야하는 불편함도 있었습니다.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
 
-### `npm run eject`
+#### *GraphQL 사용*
+다음과 같이 React Project에서 GraphQL을 세팅해주었습니다.
+```JS
+// App.js
+import React from "react";
+import ReactDOM from "react-dom";
+import { BrowserRouter } from "react-router-dom";
+import { ApolloClient, InMemoryCache, ApolloProvider } from "@apollo/client";
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+import App from "./App";
+import GlobalStyle from "./GlobalStyle";
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+const client = new ApolloClient({
+  uri: "https://beta.pokeapi.co/graphql/v1beta",
+  cache: new InMemoryCache(),
+});
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+ReactDOM.render(
+  <ApolloProvider client={client}>
+    <BrowserRouter basename={process.env.PUBLIC_URL}>
+      <React.StrictMode>
+        <GlobalStyle />
+        <App />
+      </React.StrictMode>
+    </BrowserRouter>
+  </ApolloProvider>,
+  document.getElementById("root"),
+);
+```
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+그리고 아래와 같이 내가 원하는 데이터를 쿼리로 입력하여 사용할 수 있었습니다.
+```JS
+const POKEMON_LIST_QUERY = gql`
+  query samplePokeAPIquery {
+    pokemon_v2_pokemon {
+      id
+      name
+      pokemon_species_id
+      pokemon_v2_pokemontypes {
+        pokemon_v2_type {
+          id
+          name
+        }
+      }
+    }
+  }
+`;
+```
 
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
+## Reference
+- [https://www.inflearn.com/course/%EC%96%84%ED%8C%8D%ED%95%9C-graphql-apollo](https://www.inflearn.com/course/%EC%96%84%ED%8C%8D%ED%95%9C-graphql-apollo)
+- [https://graphql.org/learn/](https://graphql.org/learn/)
+- [https://graphql.org/learn/https://graphql.org/learn/](https://graphql.org/learn/https://graphql.org/learn/)
