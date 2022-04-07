@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 
-import { Pokemon, PokemonType, Type } from "../../assets/type";
+import { Pokemon } from "../../assets/type";
 
 import * as S from "./style";
 import { MdCatchingPokemon } from "react-icons/md";

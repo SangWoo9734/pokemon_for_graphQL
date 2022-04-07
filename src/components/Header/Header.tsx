@@ -1,7 +1,6 @@
 import React from "react";
 
 import * as S from "./style";
-import { AiFillGithub } from "react-icons/ai";
 
 function Header() {
   return (
