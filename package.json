@@ -1,5 +1,6 @@
 {
   "name": "pokedex",
+  "homepage": "http://sangwoo9734.github.io/pokemon_for_GraphQL",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -14,6 +15,7 @@
     "@types/react-dom": "^17.0.13",
     "@types/styled-components": "^5.1.24",
     "apollo-boost": "^0.4.9",
+    "gh-pages": "^3.2.3",
     "graphql": "^15.8.0",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
@@ -21,6 +23,7 @@
     "react-redux": "^7.2.6",
     "react-router-dom": "^6.2.2",
     "react-scripts": "5.0.0",
+    "redux": "^4.1.2",
     "styled-components": "^5.3.3",
     "typescript": "^4.6.2",
     "web-vitals": "^2.1.4"
@@ -39,7 +42,9 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build"
   },
   "eslintConfig": {
     "extends": [
