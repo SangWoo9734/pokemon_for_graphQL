@@ -2,6 +2,7 @@ import styled from "styled-components";
 import { colorOfType } from "../../assets/typeColor";
 
 export const PokemonCardWrapper = styled.div`
+  max-width: 280px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -63,6 +64,7 @@ export const PokemonType = styled.div<{ type: string }>`
 `;
 
 export const PokemonImageWrapper = styled.div`
+  width: 40%;
   padding: 5px;
   border-radius: 50%;
   box-shadow: 0 0 10px 0 #d4d4d4;
