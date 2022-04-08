@@ -1,12 +1,15 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useQuery, gql } from "@apollo/client";
+import { useAppSelector, useAppDispatch } from "../../hooks/reduxHooks";
 
 import { Pokemon, PokemonSpecies } from "../../assets/type";
 
 import * as S from "./style";
 import Loading from "../../components/Loading";
 import PokemonCard from "../../components/PokemonCard";
-import SortPokemon from "../../components/SortPokemon";
+import FilterPokemon from "../../components/FilterPokemon";
+import Toggle from "../../components/Toggle";
+import { changeMode } from "../../store/modeSlice";
 
 const POKEMON_LIST_QUERY = gql`
   query samplePokeAPIquery {
@@ -76,33 +79,72 @@ interface ResponseType {
 function Home() {
   const { loading, data }: ResponseType = useQuery(POKEMON_LIST_QUERY);
   const [pokemon, setPokemon] = useState<Pokemon[]>([]);
-  const [totalPokemon, setTotalPokemon] = useState<number>(0);
-  const [page, setPage] = useState<number>(3);
+  const [page, setPage] = useState<number>(1);
+  const mode = useAppSelector((state) => state.mode);
+  const selectedType = useAppSelector((state) => state.type.type);
+  const targetRef = useRef<HTMLDivElement>(null);
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
+    localStorage.setItem("mode", mode.mode.toString());
+    setPage(1);
     if (!loading) {
-      setPokemon((data as Data).pokemon_v2_pokemon);
-      console.log(data);
-      setTotalPokemon((data as Data).pokemon_v2_pokemonspecies.length);
+      const totalPokemonLength = (data as Data).pokemon_v2_pokemonspecies.length;
+
+      const originPokemon = (data as Data).pokemon_v2_pokemon.slice(0, totalPokemonLength);
+
+      if (selectedType) {
+        const filteredPokemon = originPokemon.filter(
+          (poke) =>
+            poke.pokemon_v2_pokemontypes.filter(
+              (type) => type.pokemon_v2_type.name.toUpperCase() === selectedType,
+            ).length > 0,
+        );
+
+        setPokemon(filteredPokemon);
+      } else {
+        setPokemon(originPokemon);
+      }
     }
-  }, [loading]);
+  }, [loading, selectedType]);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(intersectionObserver);
+    targetRef.current && observer.observe(targetRef.current);
+  });
+
+  const intersectionObserver = (entries: IntersectionObserverEntry[], io: IntersectionObserver) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        io.unobserve(entry.target);
+        setPage(page + 1);
+      }
+    });
+  };
 
   return (
-    <div>
+    <S.HomeOuterContainer mode={mode.mode}>
       {!loading && pokemon && (
-        <div>
+        <div className="limitWidth">
           <S.Title>Pokedex</S.Title>
           <S.SubTitle> -- All About POKEMON -- </S.SubTitle>
-          <SortPokemon />
+          <Toggle />
+          <FilterPokemon />
           <S.PokemonList>
-            {pokemon.slice(0, 33 * page).map((data) => {
-              return <PokemonCard pokemonInfo={data} key={data.id} />;
+            {pokemon.slice(0, 30 * page).map((data, index) => {
+              return (
+                <PokemonCard
+                  ref={index === 30 * page - 4 ? targetRef : null}
+                  pokemonInfo={data}
+                  key={data.id}
+                />
+              );
             })}
           </S.PokemonList>
         </div>
       )}
-      {loading && <Loading />}
-    </div>
+      {loading && pokemon && <Loading />}
+    </S.HomeOuterContainer>
   );
 }
 
