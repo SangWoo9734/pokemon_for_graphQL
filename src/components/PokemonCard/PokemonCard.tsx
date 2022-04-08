@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, forwardRef, ForwardedRef } from "react";
 
 import { Pokemon } from "../../assets/type";
 
@@ -18,11 +18,11 @@ const UpperFirstLetter = (word: string) => {
   return word.charAt(0).toUpperCase() + word.slice(1);
 };
 
-function PokemonCard({ pokemonInfo }: Props) {
+function PokemonCard({ pokemonInfo }: Props, ref: ForwardedRef<HTMLDivElement>) {
   const [focusState, setfocusState] = useState<number>(0);
 
   return (
-    <S.PokemonCardWrapper>
+    <S.PokemonCardWrapper ref={ref}>
       <S.PokemonInfoWrapper>
         <S.PokemonIndex>
           <MdCatchingPokemon />
@@ -52,7 +52,7 @@ function PokemonCard({ pokemonInfo }: Props) {
         <img
           src={`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${
             focusState ? "back/" : ""
-          }${pokemonInfo.pokemon_species_id}.png`}
+          }${pokemonInfo.id}.png`}
           alt=""
         />
       </S.PokemonImageWrapper>
@@ -60,4 +60,4 @@ function PokemonCard({ pokemonInfo }: Props) {
   );
 }
 
-export default PokemonCard;
+export default forwardRef(PokemonCard);
