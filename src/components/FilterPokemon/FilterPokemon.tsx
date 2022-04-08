@@ -1,11 +1,14 @@
 import React, { useState } from "react";
+import { useAppSelector, useAppDispatch } from "../../hooks/reduxHooks";
+import { settingSortType } from "../../store/typeSlice";
 
 import * as S from "./style";
 import { TYPE } from "../../assets/typeColor";
 
-function SortPokemon() {
+function FilterPokemon() {
   const [openState, setOpenState] = useState<boolean>(false);
-  const [selectedType, setSelectedType] = useState<string>("");
+  const selectedType = useAppSelector((state) => state.type.type);
+  const dispatch = useAppDispatch();
 
   const isTypeSelected = (type: string) => {
     return selectedType ? selectedType === type : true;
@@ -35,7 +38,7 @@ function SortPokemon() {
                     isSelected={isTypeSelected(type)}
                     key={index}
                     onClick={() => {
-                      setSelectedType(selectedType === type ? "" : type);
+                      dispatch(settingSortType({ type: selectedType === type ? "" : type }));
                     }}
                   >
                     {type}
@@ -50,4 +53,4 @@ function SortPokemon() {
   );
 }
 
-export default SortPokemon;
+export default FilterPokemon;
