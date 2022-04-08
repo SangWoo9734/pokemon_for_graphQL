@@ -16,7 +16,7 @@ const GlobalStyle = createGlobalStyle`
   *,:after, :before {box-sizing:border-box;flex-shrink:0;}
   :root {-webkit-tap-highlight-color:transparent;-webkit-text-size-adjust:100%;text-size-adjust:100%;cursor:default;line-height:1.5;overflow-wrap:break-word;-moz-tab-size:4;tab-size:4}
   html {font-size: 62.5%; scroll-behavior: smooth;}
-  html, body {width: 100%; height:100%; max-width: 900px; margin: 0 auto; background-color: #F7F7FB; color: black}
+  html, body {width: 100%; height:100%; margin: 0 auto; color: black}
   img, picture, video, canvas {display: block;max-width:100%;};
   li {list-style: none};
   p {margin: 0};
@@ -24,9 +24,7 @@ const GlobalStyle = createGlobalStyle`
   a {text-decoration:none}
   table {border-collapse:collapse;border-spacing:0}
 
-  * { font-family: 'PKMN RBYGSC'; &::-webkit-scrollbar {
-    display: none;
-  }}
+  * { font-family: 'PKMN RBYGSC'; }
 `;
 
 export default GlobalStyle;

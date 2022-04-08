@@ -16,14 +16,10 @@ export const PokemonCardWrapper = styled.div`
 `;
 
 export const PokemonIndex = styled.div`
-  position: relative;
   width: 80px;
   text-align: center;
-  border-radius: 5px 5px 0 0;
-  background-color: white;
   font-size: 1.1rem;
   font-weight: 500;
-  z-index: 1;
 
   svg {
     margin-right: 5px;
@@ -33,7 +29,7 @@ export const PokemonIndex = styled.div`
 export const PokemonInfoWrapper = styled.div`
   width: 60%;
   position: relative;
-  padding: 10px;
+  padding-right: 10px;
 `;
 
 export const PokemonInfo = styled.div``;

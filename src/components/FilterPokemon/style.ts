@@ -3,8 +3,10 @@ import styled from "styled-components";
 import { colorOfType } from "../../assets/typeColor";
 
 export const FilterOuterWrapper = styled.div`
-  margin: 0 10px;
-  padding: 10px;
+  max-width: 900px;
+  width: 100%;
+  margin: auto;
+  padding: 15px;
   border-radius: 10px;
 
   & > button {
@@ -28,6 +30,7 @@ export const FilterSearch = styled.input`
   padding: 5px 10px;
   border-radius: 5px;
   font-size: 1.1rem;
+  color: black;
 `;
 
 export const TypeWrapper = styled.div`

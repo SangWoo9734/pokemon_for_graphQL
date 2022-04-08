@@ -4,6 +4,7 @@ export const LoadingBackground = styled.div`
   position: fixed;
   top: 0;
   left: 0;
+  max-width: none;
   width: 100vw;
   height: 100vh;
   background: #000000a8;
