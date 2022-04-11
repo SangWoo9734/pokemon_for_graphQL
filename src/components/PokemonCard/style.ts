@@ -50,7 +50,7 @@ export const PokemonTypeWrapper = styled.div`
 
 export const PokemonType = styled.div<{ type: string }>`
   margin: 2px 0;
-  padding: 0 10px;
+  padding: 2px 10px;
   background: ${({ type }) => colorOfType(type)};
   text-align: center;
   border-radius: 5px;
