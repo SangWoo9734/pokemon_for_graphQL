@@ -1,12 +1,15 @@
 import React, { useState, forwardRef, ForwardedRef } from "react";
 
-import { Pokemon } from "../../assets/type";
+import { Pokemon, PokemonSpecies } from "../../assets/type";
 
 import * as S from "./style";
 import { MdCatchingPokemon } from "react-icons/md";
 
 interface Props {
-  pokemonInfo: Pokemon;
+  pokemonInfo: PokemonSpecies;
+  setModal: React.Dispatch<React.SetStateAction<boolean>>;
+  setPokemonDetailId: React.Dispatch<React.SetStateAction<number>>;
+  setPokmonChainId: React.Dispatch<React.SetStateAction<number>>;
 }
 
 const fillZero = (number: number) => {
@@ -18,20 +21,31 @@ const UpperFirstLetter = (word: string) => {
   return word.charAt(0).toUpperCase() + word.slice(1);
 };
 
-function PokemonCard({ pokemonInfo }: Props, ref: ForwardedRef<HTMLDivElement>) {
+function PokemonCard(
+  { pokemonInfo, setModal, setPokemonDetailId, setPokmonChainId }: Props,
+  ref: ForwardedRef<HTMLDivElement>,
+) {
   const [focusState, setfocusState] = useState<number>(0);
+  const pokemonData: Pokemon = pokemonInfo.pokemon_v2_pokemons[0];
 
   return (
-    <S.PokemonCardWrapper ref={ref}>
+    <S.PokemonCardWrapper
+      ref={ref}
+      onClick={() => {
+        setModal(true);
+        setPokemonDetailId(pokemonInfo.id);
+        setPokmonChainId(pokemonInfo.evolution_chain_id);
+      }}
+    >
       <S.PokemonInfoWrapper>
         <S.PokemonIndex>
           <MdCatchingPokemon />
-          {`No.${fillZero(pokemonInfo.pokemon_species_id)}`}
+          {`No.${fillZero(pokemonInfo.id)}`}
         </S.PokemonIndex>
         <S.PokemonInfo>
-          <S.PokemonName>{UpperFirstLetter(pokemonInfo.name)}</S.PokemonName>
+          <S.PokemonName>{UpperFirstLetter(pokemonData.name)}</S.PokemonName>
           <S.PokemonTypeWrapper>
-            {pokemonInfo.pokemon_v2_pokemontypes.map((pokemonType, index) => {
+            {pokemonData.pokemon_v2_pokemontypes.map((pokemonType, index) => {
               return (
                 <S.PokemonType type={pokemonType.pokemon_v2_type.name.toUpperCase()} key={index}>
                   {UpperFirstLetter(pokemonType.pokemon_v2_type.name)}

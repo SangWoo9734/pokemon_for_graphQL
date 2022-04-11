@@ -2,72 +2,35 @@ import React, { useEffect, useRef, useState } from "react";
 import { useQuery, gql } from "@apollo/client";
 import { useAppSelector, useAppDispatch } from "../../hooks/reduxHooks";
 
-import { Pokemon, PokemonSpecies } from "../../assets/type";
+import { Pokemon, PokemonSpecies, PokemonType, Type } from "../../assets/type";
 
 import * as S from "./style";
 import Loading from "../../components/Loading";
 import PokemonCard from "../../components/PokemonCard";
 import FilterPokemon from "../../components/FilterPokemon";
 import Toggle from "../../components/Toggle";
-import { changeMode } from "../../store/modeSlice";
+import Detail from "../../components/Detail";
 
 const POKEMON_LIST_QUERY = gql`
   query samplePokeAPIquery {
-    pokemon_v2_pokemon {
-      id
-      name
-      pokemon_species_id
-      pokemon_v2_pokemontypes {
-        pokemon_v2_type {
-          id
-          name
-        }
-      }
-    }
     pokemon_v2_pokemonspecies {
       id
+      evolution_chain_id
+      pokemon_v2_pokemons {
+        name
+        id
+        pokemon_v2_pokemontypes {
+          pokemon_v2_type {
+            id
+            name
+          }
+        }
+      }
     }
   }
 `;
 
-// query samplePokeAPIquery {
-//   pokemon_v2_evolutionchain_by_pk(id: 1) {
-//     pokemon_v2_pokemonspecies {
-//       evolution_chain_id
-//       id
-//       name
-//       pokemon_v2_pokemons {
-//         id
-//         name
-//         pokemon_v2_pokemontypes {
-//           pokemon_v2_type {
-//             name
-//             id
-//           }
-//         }
-//         pokemon_v2_pokemonstats {
-//           base_stat
-//           stat_id
-//           pokemon_v2_stat {
-//             name
-//             id
-//           }
-//         }
-//         height
-//         weight
-//         pokemon_v2_pokemonabilities {
-//           pokemon_v2_ability {
-//             id
-//             name
-//           }
-//         }
-//       }
-//     }
-//   }
-// }
-
 interface Data {
-  pokemon_v2_pokemon: Pokemon[];
   pokemon_v2_pokemonspecies: PokemonSpecies[];
 }
 
@@ -78,26 +41,30 @@ interface ResponseType {
 
 function Home() {
   const { loading, data }: ResponseType = useQuery(POKEMON_LIST_QUERY);
-  const [pokemon, setPokemon] = useState<Pokemon[]>([]);
+  const [pokemon, setPokemon] = useState<PokemonSpecies[]>([]);
   const [page, setPage] = useState<number>(1);
+  const [modal, setModal] = useState<boolean>(false);
+  const [pokemonDetailId, setPokemonDetailId] = useState<number>(0);
+  const [pokemonChainId, setPokmonChainId] = useState<number>(0);
   const mode = useAppSelector((state) => state.mode);
   const selectedType = useAppSelector((state) => state.type.type);
   const targetRef = useRef<HTMLDivElement>(null);
-  const dispatch = useAppDispatch();
 
   useEffect(() => {
     localStorage.setItem("mode", mode.mode.toString());
     setPage(1);
     if (!loading) {
-      const totalPokemonLength = (data as Data).pokemon_v2_pokemonspecies.length;
-
-      const originPokemon = (data as Data).pokemon_v2_pokemon.slice(0, totalPokemonLength);
+      const originPokemon = [...(data?.pokemon_v2_pokemonspecies as PokemonSpecies[])].sort(
+        (a, b) => {
+          return a.id - b.id;
+        },
+      );
 
       if (selectedType) {
         const filteredPokemon = originPokemon.filter(
-          (poke) =>
-            poke.pokemon_v2_pokemontypes.filter(
-              (type) => type.pokemon_v2_type.name.toUpperCase() === selectedType,
+          (poke: PokemonSpecies) =>
+            poke.pokemon_v2_pokemons[0].pokemon_v2_pokemontypes.filter(
+              (type: PokemonType) => type.pokemon_v2_type.name.toUpperCase() === selectedType,
             ).length > 0,
         );
 
@@ -124,7 +91,7 @@ function Home() {
 
   return (
     <S.HomeOuterContainer mode={mode.mode}>
-      {!loading && pokemon && (
+      {!loading && pokemon.length > 0 && (
         <div className="limitWidth">
           <S.Title>Pokedex</S.Title>
           <S.SubTitle> -- All About POKEMON -- </S.SubTitle>
@@ -135,13 +102,19 @@ function Home() {
               return (
                 <PokemonCard
                   ref={index === 30 * page - 4 ? targetRef : null}
-                  pokemonInfo={data}
                   key={data.id}
+                  pokemonInfo={data}
+                  setModal={setModal}
+                  setPokemonDetailId={setPokemonDetailId}
+                  setPokmonChainId={setPokmonChainId}
                 />
               );
             })}
           </S.PokemonList>
         </div>
+      )}
+      {modal && (
+        <Detail pokemonId={pokemonDetailId} pokemonChainId={pokemonChainId} setModal={setModal} />
       )}
       {loading && pokemon && <Loading />}
     </S.HomeOuterContainer>
