@@ -1,3 +1,5 @@
+# POKEDEX
+
 #### 🕹 [배포 페이지 바로가기](https://pokemon-for-graph-ql.vercel.app/)
 
 ## 기술 스택
