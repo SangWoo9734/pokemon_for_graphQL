@@ -1,15 +1,23 @@
+# POKEDEX
+
 #### 🕹 [배포 페이지 바로가기](https://pokemon-for-graph-ql.vercel.app/)
 
 ## 기술 스택
 
-<p>
-  <img src="https://img.shields.io/badge/Typescript-3178C6?style=for-the-badge&logo=TypeScript&logoColor=white" />
-  <img src="https://img.shields.io/badge/react-%2320232a.svg?style=for-the-badge&logo=react&logoColor=%2361DAFB" />
-  <img src="https://img.shields.io/badge/styled--components-DB7093?style=for-the-badge&logo=styled-components&logoColor=white" />
+<div>
+  <p>
+    <img src="https://img.shields.io/badge/Typescript-3178C6?style=for-the-badge&logo=TypeScript&logoColor=white" />
+    <img src="https://img.shields.io/badge/react-%2320232a.svg?style=for-the-badge&logo=react&logoColor=%2361DAFB" />
+    <img src="https://img.shields.io/badge/styled--components-DB7093?style=for-the-badge&logo=styled-components&logoColor=white" />
   <img src="https://img.shields.io/badge/react--icons-brightgreen?style=for-the-badge" />
-  <img src="https://img.shields.io/badge/react--router--dom-CA4245?style=for-the-badge&logo=React-Router&logoColor=white" />
-  <img src="https://img.shields.io/badge/GraphQL-E10098?style=for-the-badge&logo=GraphQL&logoColor=white" />
-</p>
+  </p>
+  <p>
+    <img src="https://img.shields.io/badge/react--router--dom-CA4245?style=for-the-badge&logo=React-Router&logoColor=white" />
+    <img src="https://img.shields.io/badge/GraphQL-E10098?style=for-the-badge&logo=GraphQL&logoColor=white" />
+    <img src="https://img.shields.io/badge/Apollo--GraphQL-311C87?style=for-the-badge&logo=Apollo-GraphQL&logoColor=white" />
+    <img src="https://img.shields.io/badge/redux-764ABC?style=for-the-badge&logo=redux&logoColor=white" />
+  </p>
+</div>
 
 ## 프로젝트 시작
 
@@ -68,22 +76,87 @@ ReactDOM.render(
 
 그리고 아래와 같이 내가 원하는 데이터를 쿼리로 입력하여 사용할 수 있었습니다.
 ```JS
-const POKEMON_LIST_QUERY = gql`
+// 포켓몬 리스트 조회 쿼리
+export const POKEMON_LIST_QUERY = gql`
   query samplePokeAPIquery {
-    pokemon_v2_pokemon {
+    pokemon_v2_pokemonspecies {
       id
-      name
-      pokemon_species_id
-      pokemon_v2_pokemontypes {
-        pokemon_v2_type {
-          id
+      evolution_chain_id
+      pokemon_v2_pokemons {
+        name
+        id
+        pokemon_v2_pokemontypes {
+          pokemon_v2_type {
+            id
+            name
+          }
+        }
+      }
+    }
+  }
+`;
+
+// 포켓몬 한국어 이름 조회 쿼리
+export const POKEMON_KR_NAME_QUERY = gql`
+  query pokeNameKrQuery {
+    pokemon_v2_languagename_by_pk(id: 13) {
+      pokemon_v2_language {
+        pokemon_v2_pokemonspeciesnames {
           name
+          pokemon_species_id
         }
       }
     }
   }
 `;
 ```
+## Redux(-Toolkit)
+### 다크모드
+다크모드와 관련된 state를 전역으로 관리하여 한 페이지에서 적용한 세팅이 이후 다른 페이지에서도 적용될 수 있도록 제작하였습니다.
+```JS
+// store.ts
+import { configureStore } from "@reduxjs/toolkit";
+import modeReducer from "./modeSlice";
+import typeReducer from "./typeSlice";
+
+export const store = configureStore({
+  reducer: {
+    mode: modeReducer,
+    type: typeReducer,
+  },
+});
+
+export type RootState = ReturnType<typeof store.getState>;
+export type AppDispatch = typeof store.dispatch;
+
+// modeSlice.ts
+import { createSlice } from "@reduxjs/toolkit";
+
+interface modeType {
+  mode: boolean;
+}
+
+const initialState: modeType = {
+  mode: false,
+};
+
+export const modeSlice = createSlice({
+  name: "modeChange",
+  initialState,
+  reducers: {
+    changeMode: (state) => {
+      state.mode = !state.mode;
+      localStorage.setItem("mode", state.mode.toString());
+    },
+  },
+});
+
+export const { changeMode } = modeSlice.actions;
+
+export default modeSlice.reducer;
+```
+
+
 
 ## Reference
 - [https://www.inflearn.com/course/%EC%96%84%ED%8C%8D%ED%95%9C-graphql-apollo](https://www.inflearn.com/course/%EC%96%84%ED%8C%8D%ED%95%9C-graphql-apollo)
