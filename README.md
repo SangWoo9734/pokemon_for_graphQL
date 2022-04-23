@@ -156,8 +156,6 @@ export const { changeMode } = modeSlice.actions;
 export default modeSlice.reducer;
 ```
 
-
-
 ## Reference
 - [https://www.inflearn.com/course/%EC%96%84%ED%8C%8D%ED%95%9C-graphql-apollo](https://www.inflearn.com/course/%EC%96%84%ED%8C%8D%ED%95%9C-graphql-apollo)
 - [https://graphql.org/learn/](https://graphql.org/learn/)
