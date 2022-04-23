@@ -1,47 +1,42 @@
 import React, { useEffect, useRef, useState } from "react";
-import { useQuery, gql } from "@apollo/client";
-import { useAppSelector, useAppDispatch } from "../../hooks/reduxHooks";
+import { useQuery } from "@apollo/client";
+import { useAppSelector } from "../../hooks/reduxHooks";
 
-import { Pokemon, PokemonSpecies, PokemonType, Type } from "../../assets/type";
+import {
+  PokemonSpecies,
+  PokemonType,
+  PokemonLanguage,
+  PokemonSpeciesNmKr,
+  PokeNmKr,
+} from "../../assets/type";
+import { POKEMON_LIST_QUERY, POKEMON_KR_NAME_QUERY } from "../../hooks/useGraphQL";
 
 import * as S from "./style";
 import Loading from "../../components/Loading";
 import PokemonCard from "../../components/PokemonCard";
 import FilterPokemon from "../../components/FilterPokemon";
-import Toggle from "../../components/Toggle";
 import Detail from "../../components/Detail";
+import Toggle from "../../components/Toggle";
+import { Link } from "react-router-dom";
 
-const POKEMON_LIST_QUERY = gql`
-  query samplePokeAPIquery {
-    pokemon_v2_pokemonspecies {
-      id
-      evolution_chain_id
-      pokemon_v2_pokemons {
-        name
-        id
-        pokemon_v2_pokemontypes {
-          pokemon_v2_type {
-            id
-            name
-          }
-        }
-      }
-    }
-  }
-`;
-
-interface Data {
+interface PokemonData {
   pokemon_v2_pokemonspecies: PokemonSpecies[];
+}
+
+interface NameData {
+  pokemon_v2_languagename_by_pk: PokemonLanguage;
 }
 
 interface ResponseType {
   loading: boolean;
-  data: undefined | Data;
+  data: undefined | PokemonData;
 }
 
 function Home() {
   const { loading, data }: ResponseType = useQuery(POKEMON_LIST_QUERY);
+  const response = useQuery(POKEMON_KR_NAME_QUERY);
   const [pokemon, setPokemon] = useState<PokemonSpecies[]>([]);
+  const [pokemonNM, setPokemonNM] = useState<PokeNmKr[]>([]);
   const [page, setPage] = useState<number>(1);
   const [modal, setModal] = useState<boolean>(false);
   const [pokemonDetailId, setPokemonDetailId] = useState<number>(0);
@@ -76,6 +71,15 @@ function Home() {
   }, [loading, selectedType]);
 
   useEffect(() => {
+    if (!response.loading) {
+      const NmData = (response.data as NameData).pokemon_v2_languagename_by_pk.pokemon_v2_language
+        .pokemon_v2_pokemonspeciesnames;
+      setPokemonNM(NmData);
+      console.log(NmData);
+    }
+  }, [response]);
+
+  useEffect(() => {
     const observer = new IntersectionObserver(intersectionObserver);
     targetRef.current && observer.observe(targetRef.current);
   });
@@ -89,12 +93,20 @@ function Home() {
     });
   };
 
+  const convertNameToKr = (speciesId: number) => {
+    const krName = pokemonNM.find((pokemon) => pokemon.pokemon_species_id === speciesId)?.name;
+    return typeof krName == undefined ? "" : (krName as string);
+  };
+
   return (
     <S.HomeOuterContainer mode={mode.mode}>
       {!loading && pokemon.length > 0 && (
         <div className="limitWidth">
           <S.Title>Pokedex</S.Title>
           <S.SubTitle> -- All About POKEMON -- </S.SubTitle>
+          <S.Link>
+            <Link to="/quiz">Let&apos;s Pokemon Quiz!</Link>
+          </S.Link>
           <Toggle />
           <FilterPokemon />
           <S.PokemonList>
@@ -104,6 +116,7 @@ function Home() {
                   ref={index === 30 * page - 4 ? targetRef : null}
                   key={data.id}
                   pokemonInfo={data}
+                  pokemonNameKr={convertNameToKr(data.id)}
                   setModal={setModal}
                   setPokemonDetailId={setPokemonDetailId}
                   setPokmonChainId={setPokmonChainId}
