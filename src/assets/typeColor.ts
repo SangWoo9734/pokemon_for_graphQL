@@ -77,6 +77,6 @@ export const colorOfType = (type: string) => {
       return "#6f8c9c";
 
     default:
-      return "#ffffff";
+      return "#a2a2a2";
   }
 };

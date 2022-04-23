@@ -78,3 +78,18 @@ export interface PokemonEvolution {
   pokemon_v2_evolutionchain_by_pk: PokemonEvolutionChain;
   pokemon_v2_pokemon_by_pk: PokemonInfo;
 }
+
+export interface PokemonLanguage {
+  __typename: string;
+  pokemon_v2_language: PokemonSpeciesNmKr;
+}
+
+export interface PokemonSpeciesNmKr {
+  __typename: string;
+  pokemon_v2_pokemonspeciesnames: PokeNmKr[];
+}
+export interface PokeNmKr {
+  __typename: string;
+  name: string;
+  pokemon_species_id: number;
+}
