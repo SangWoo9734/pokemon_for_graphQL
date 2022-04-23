@@ -2,7 +2,6 @@ import styled from "styled-components";
 
 export const HomeOuterContainer = styled.div<{ mode: boolean }>`
   position: relative;
-  margin: auto;
   background: ${({ mode }) => (mode ? "#282641" : "white")};
   color: ${({ mode }) => (mode ? "white" : "")};
 
@@ -14,6 +13,7 @@ export const HomeOuterContainer = styled.div<{ mode: boolean }>`
 
 export const Title = styled.div`
   padding: 0 15px;
+  padding-top: 20px;
   font-family: "KARMATIC ARCADE";
   font-size: 3rem;
   text-align: center;
@@ -22,6 +22,32 @@ export const Title = styled.div`
 export const SubTitle = styled.div`
   font-size: 1.3rem;
   text-align: center;
+`;
+
+export const Link = styled.div`
+  width: 30%;
+  margin: 30px auto 10px auto;
+  padding: 5px 15px;
+  border-radius: 10px;
+  background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+  background-size: 200% 200%;
+  color: white;
+  animation: Gradiant 5s linear infinite;
+  text-align: center;
+  font-size: 1.5rem;
+  font-weight: bolder;
+
+  @keyframes Gradiant {
+    0% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+    100% {
+      background-position: 0% 50%;
+    }
+  }
 `;
 
 export const PokemonList = styled.div`

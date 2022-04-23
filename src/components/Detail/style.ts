@@ -14,39 +14,59 @@ export const DetailWrapper = styled.div`
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  max-width: 700px;
+  max-width: 600px;
   width: 80%;
+  max-height: 600px;
   padding: 20px;
   border-radius: 10px;
   background: white;
+  overflow: auto;
 `;
 export const DetailInfo = styled.div`
   display: flex;
+
+  @media only screen and (max-width: 650px) {
+    display: block;
+  }
 `;
 
 export const DetailImage = styled.img`
+  max-width: 300px;
   width: 45%;
+  margin: auto;
+
+  @media only screen and (max-width: 650px) {
+    width: 100%;
+  }
 `;
 
 export const PokemonName = styled.div`
-  margin-bottom: 20px;
+  margin-bottom: 10px;
   font-size: 2rem;
   font-weight: bolder;
 `;
 export const DetailStatusWrapper = styled.div`
-  padding: 10px 20px;
   width: 55%;
+  margin: auto;
+  padding: 0 15px;
+
+  @media only screen and (max-width: 650px) {
+    width: 100%;
+  }
 `;
 
 export const DetailStatus = styled.div`
   display: flex;
   justify-content: space-between;
-  padding: 0 20px;
+  @media only screen and (max-width: 450px) {
+    display: block;
+  }
 `;
-export const PokemonType = styled.div<{ type: string }>`
+export const PokemonTag = styled.div<{ tag: string }>`
+  max-width: 100px;
   margin: 2px 0;
   padding: 2px 10px;
-  background: ${({ type }) => colorOfType(type)};
+  background: ${({ tag }) => colorOfType(tag)};
   text-align: center;
   border-radius: 5px;
   font-size: 1rem;
@@ -55,6 +75,7 @@ export const PokemonType = styled.div<{ type: string }>`
 `;
 
 export const PokemonAbility = styled.div`
+  max-width: 100px;
   margin: 2px 0;
   padding: 2px 10px;
   background: gray;
@@ -65,15 +86,28 @@ export const PokemonAbility = styled.div`
   color: white;
 `;
 
-export const DetailEvolutionWrapper = styled.div``;
+export const DetailEvolutionWrapper = styled.div`
+  margin-top: 15px;
+  padding: 0 15px;
+
+  & > div:first-child {
+    margin-bottom: 10px;
+    font-size: 1.1rem;
+    font-weight: bold;
+  }
+`;
 
 export const DetailEvolution = styled.div`
   display: flex;
   justify-content: space-evenly;
-  margin-top: 20px;
+
+  @media only screen and (max-width: 450px) {
+    display: block;
+  }
 `;
 
 export const DetailSubTitle = styled.div`
+  margin: 10px 0;
   font-size: 1.2rem;
   font-weight: bolder;
   color: gray;
@@ -90,15 +124,21 @@ export const PokeonEvoImage = styled.img`
 `;
 
 export const EvolutionStep = styled.div`
+  max-width: 150px;
+  width: 30%;
   padding: 10px;
   border: 1px solid black;
   border-radius: 5px;
 
-  & + &::before {
-    content: " ";
-    width: 50px;
-    height: 50px;
-    background-image: url("https://cdn-icons-png.flaticon.com/512/724/724927.png");
+  & * {
+    margin: auto;
+  }
+
+  @media only screen and (max-width: 450px) {
+    max-width: 100%;
+    display: flex;
+    width: 100%;
+    margin: 10px 0;
   }
 `;
 
