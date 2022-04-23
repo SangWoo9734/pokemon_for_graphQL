@@ -131,12 +131,12 @@ function Detail({ pokemonId, pokemonChainId, setModal }: Props) {
                     <S.DetailSubTitle>Type</S.DetailSubTitle>
                     {pokemonDetailInfo.pokemon_v2_pokemontypes.map((type) => {
                       return (
-                        <S.PokemonType
+                        <S.PokemonTag
                           key={type.pokemon_v2_type.id}
-                          type={type.pokemon_v2_type.name.toUpperCase()}
+                          tag={type.pokemon_v2_type.name.toUpperCase()}
                         >
                           {type.pokemon_v2_type.name.toUpperCase()}
-                        </S.PokemonType>
+                        </S.PokemonTag>
                       );
                     })}
                   </div>
@@ -144,9 +144,9 @@ function Detail({ pokemonId, pokemonChainId, setModal }: Props) {
                     <S.DetailSubTitle>Ability</S.DetailSubTitle>
                     {pokemonDetailInfo.pokemon_v2_pokemonabilities.map((ability) => {
                       return (
-                        <S.PokemonAbility key={ability.pokemon_v2_ability.id}>
+                        <S.PokemonTag key={ability.pokemon_v2_ability.id} tag={""}>
                           {UpperFirstLetter(ability.pokemon_v2_ability.name)}
-                        </S.PokemonAbility>
+                        </S.PokemonTag>
                       );
                     })}
                   </div>
@@ -177,18 +177,20 @@ function Detail({ pokemonId, pokemonChainId, setModal }: Props) {
                       src={`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${evo.pokemon_v2_pokemons[0].id}.png`}
                       alt=""
                     />
-                    <div>{evo.pokemon_v2_pokemons[0].name}</div>
                     <div>
-                      {evo.pokemon_v2_pokemons[0].pokemon_v2_pokemontypes.map((type) => {
-                        return (
-                          <S.PokemonType
-                            key={type.pokemon_v2_type.id}
-                            type={type.pokemon_v2_type.name.toUpperCase()}
-                          >
-                            {type.pokemon_v2_type.name.toUpperCase()}
-                          </S.PokemonType>
-                        );
-                      })}
+                      <div>{evo.pokemon_v2_pokemons[0].name}</div>
+                      <div>
+                        {evo.pokemon_v2_pokemons[0].pokemon_v2_pokemontypes.map((type) => {
+                          return (
+                            <S.PokemonTag
+                              key={type.pokemon_v2_type.id}
+                              tag={type.pokemon_v2_type.name.toUpperCase()}
+                            >
+                              {type.pokemon_v2_type.name.toUpperCase()}
+                            </S.PokemonTag>
+                          );
+                        })}
+                      </div>
                     </div>
                   </S.EvolutionStep>
                 );
