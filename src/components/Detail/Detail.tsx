@@ -154,14 +154,16 @@ function Detail({ pokemonId, pokemonChainId, setModal }: Props) {
                 <div>
                   <S.DetailSubTitle>Status</S.DetailSubTitle>
                   <S.StatusTable>
-                    {pokemonDetailInfo.pokemon_v2_pokemonstats.map((stats) => {
-                      return (
-                        <tr key={stats.pokemon_v2_stat.id}>
-                          <td>{statusRename(stats.pokemon_v2_stat.name)}</td>
-                          <td>{stats.base_stat}</td>
-                        </tr>
-                      );
-                    })}
+                    <tbody>
+                      {pokemonDetailInfo.pokemon_v2_pokemonstats.map((stats) => {
+                        return (
+                          <tr key={stats.pokemon_v2_stat.id}>
+                            <td>{statusRename(stats.pokemon_v2_stat.name)}</td>
+                            <td>{stats.base_stat}</td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
                   </S.StatusTable>
                 </div>
               </S.DetailStatus>
