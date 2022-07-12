@@ -4,8 +4,8 @@ import { changeMode } from "../../store/modeSlice";
 
 import * as S from "./style";
 
-function toggle() {
-  const mode = useAppSelector((state) => state.mode);
+function Toggle() {
+  const mode = useAppSelector((state) => state.mode.mode);
   const dispatch = useAppDispatch();
 
   return (
@@ -14,11 +14,11 @@ function toggle() {
         dispatch(changeMode());
       }}
     >
-      <S.ToggleCircle mode={mode.mode}></S.ToggleCircle>
+      <S.ToggleCircle mode={mode}></S.ToggleCircle>
       <S.ToggleContent>🌛</S.ToggleContent>
       <S.ToggleContent>🌞</S.ToggleContent>
     </S.ToggleOuterWrapper>
   );
 }
 
-export default toggle;
+export default Toggle;
