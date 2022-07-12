@@ -1,14 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useQuery } from "@apollo/client";
 import { useAppSelector } from "../../hooks/reduxHooks";
-
-import {
-  PokemonSpecies,
-  PokemonType,
-  PokemonLanguage,
-  PokemonSpeciesNmKr,
-  PokeNmKr,
-} from "../../assets/type";
+import { PokemonSpecies, PokemonType, PokemonLanguage, PokeNmKr } from "../../assets/type";
 import { POKEMON_LIST_QUERY, POKEMON_KR_NAME_QUERY } from "../../hooks/useGraphQL";
 
 import * as S from "./style";
@@ -41,41 +34,36 @@ function Home() {
   const [modal, setModal] = useState<boolean>(false);
   const [pokemonDetailId, setPokemonDetailId] = useState<number>(0);
   const [pokemonChainId, setPokmonChainId] = useState<number>(0);
-  const mode = useAppSelector((state) => state.mode);
+  const [searchWord, setSearchWord] = useState<string>("");
+  const mode = useAppSelector((state) => state.mode.mode);
   const selectedType = useAppSelector((state) => state.type.type);
   const targetRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    localStorage.setItem("mode", mode.mode.toString());
     setPage(1);
     if (!loading) {
-      const originPokemon = [...(data?.pokemon_v2_pokemonspecies as PokemonSpecies[])].sort(
+      let originPokemon = [...(data?.pokemon_v2_pokemonspecies as PokemonSpecies[])].sort(
         (a, b) => {
           return a.id - b.id;
         },
       );
 
       if (selectedType) {
-        const filteredPokemon = originPokemon.filter(
-          (poke: PokemonSpecies) =>
-            poke.pokemon_v2_pokemons[0].pokemon_v2_pokemontypes.filter(
-              (type: PokemonType) => type.pokemon_v2_type.name.toUpperCase() === selectedType,
-            ).length > 0,
-        );
-
-        setPokemon(filteredPokemon);
-      } else {
-        setPokemon(originPokemon);
+        originPokemon = filterWithType(originPokemon, selectedType);
       }
+      if (searchWord) {
+        originPokemon = filterWithWord(originPokemon, searchWord);
+      }
+
+      setPokemon(originPokemon);
     }
-  }, [loading, selectedType]);
+  }, [loading, selectedType, searchWord]);
 
   useEffect(() => {
     if (!response.loading) {
       const NmData = (response.data as NameData).pokemon_v2_languagename_by_pk.pokemon_v2_language
         .pokemon_v2_pokemonspeciesnames;
       setPokemonNM(NmData);
-      console.log(NmData);
     }
   }, [response]);
 
@@ -83,6 +71,23 @@ function Home() {
     const observer = new IntersectionObserver(intersectionObserver);
     targetRef.current && observer.observe(targetRef.current);
   });
+
+  const filterWithType = (pokemonList: PokemonSpecies[], selectedType: string) => {
+    return pokemonList.filter(
+      (poke: PokemonSpecies) =>
+        poke.pokemon_v2_pokemons[0].pokemon_v2_pokemontypes.filter(
+          (type: PokemonType) => type.pokemon_v2_type.name.toUpperCase() === selectedType,
+        ).length > 0,
+    );
+  };
+
+  const filterWithWord = (pokemonList: PokemonSpecies[], userInput: string) => {
+    const filteredList = pokemonList.filter((poke: PokemonSpecies) =>
+      poke.pokemon_v2_pokemons[0].name.includes(userInput),
+    );
+
+    return filteredList.length ? filteredList : pokemonList;
+  };
 
   const intersectionObserver = (entries: IntersectionObserverEntry[], io: IntersectionObserver) => {
     entries.forEach((entry) => {
@@ -99,16 +104,14 @@ function Home() {
   };
 
   return (
-    <S.HomeOuterContainer mode={mode.mode}>
+    <S.HomeOuterContainer mode={mode}>
       {!loading && pokemon.length > 0 && (
         <div className="limitWidth">
-          <S.Title>Pokedex</S.Title>
-          <S.SubTitle> -- All About POKEMON -- </S.SubTitle>
           <S.Link>
             <Link to="/quiz">Let&apos;s Pokemon Quiz!</Link>
           </S.Link>
           <Toggle />
-          <FilterPokemon />
+          <FilterPokemon setSearchWord={setSearchWord} />
           <S.PokemonList>
             {pokemon.slice(0, 30 * page).map((data, index) => {
               return (

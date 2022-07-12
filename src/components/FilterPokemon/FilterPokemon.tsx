@@ -5,7 +5,11 @@ import { settingSortType } from "../../store/typeSlice";
 import * as S from "./style";
 import { TYPE } from "../../assets/typeColor";
 
-function FilterPokemon() {
+interface Props {
+  setSearchWord: React.Dispatch<React.SetStateAction<string>>;
+}
+
+function FilterPokemon({ setSearchWord }: Props) {
   const [openState, setOpenState] = useState<boolean>(false);
   const selectedType = useAppSelector((state) => state.type.type);
   const dispatch = useAppDispatch();
@@ -26,7 +30,12 @@ function FilterPokemon() {
         <S.FilterInnerWrapper>
           <S.FilterPart>
             <S.FilterTitle>&lt; SEARCH &gt;</S.FilterTitle>
-            <S.FilterSearch type="text" />
+            <S.FilterSearch
+              type="text"
+              onInput={(event: React.ChangeEvent<HTMLInputElement>) => {
+                setSearchWord(event.target.value);
+              }}
+            />
           </S.FilterPart>
           <S.FilterPart>
             <S.FilterTitle>&lt; TYPE &gt;</S.FilterTitle>
