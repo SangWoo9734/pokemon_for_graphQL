@@ -11,19 +11,6 @@ export const HomeOuterContainer = styled.div<{ mode: boolean }>`
   }
 `;
 
-export const Title = styled.div`
-  padding: 0 15px;
-  padding-top: 20px;
-  font-family: "KARMATIC ARCADE";
-  font-size: 3rem;
-  text-align: center;
-`;
-
-export const SubTitle = styled.div`
-  font-size: 1.3rem;
-  text-align: center;
-`;
-
 export const Link = styled.div`
   width: 30%;
   margin: 30px auto 10px auto;
