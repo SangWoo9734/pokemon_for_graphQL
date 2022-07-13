@@ -21,19 +21,24 @@ export const SubTitle = styled.div`
 `;
 
 export const QuizInnerWrapper = styled.div`
-  width: 50%;
+  max-width: 500px;
+  width: 100%;
   margin: auto;
+  padding: 15px 10px;
   text-align: center;
 `;
 
 export const QuizImage = styled.img`
   width: 230px;
-  margin: 50px auto 10px auto;
+  margin: 30px auto 10px auto;
   border-radius: 10px;
 `;
 
 export const QuizPageTitle = styled.div`
   font-size: 3rem;
+`;
+export const QuizPageDesc = styled.p`
+  font-size: 1.4rem;
 `;
 export const QuizButtonWrapper = styled.div`
   margin: 10px 0;
@@ -49,6 +54,7 @@ export const QuizButton = styled.div<{ isSelected: boolean }>`
   background: ${({ isSelected }) => (isSelected ? "#feb23660" : "#ffffff")};
   font-size: 2rem;
   transition: all 0.3s ease;
+  text-transform: capitalize;
 
   &:hover {
     cursor: pointer;
@@ -59,16 +65,25 @@ export const QuizButton = styled.div<{ isSelected: boolean }>`
 export const QuizTypeDifficulty = styled.div`
   font-size: 1.5rem;
   margin: 10px 0;
+  text-transform: capitalize;
 `;
-export const QuizDescribe = styled.p<{ isShow: boolean }>`
+export const QuizDescribe = styled.div<{ isShow: boolean }>`
+  width: 100%;
   height: 50px;
   font-size: 1.5rem;
   margin-top: 20px;
+  padding: 10px;
   border: 1px solid black;
   border-radius: 10px;
   background: lightgray;
-  line-height: 45px;
+  display: table;
   visibility: ${({ isShow }) => (isShow ? "hidden" : "visible")};
+
+  & p {
+    text-align: center;
+    vertical-align: middle;
+    display: table-cell;
+  }
 `;
 
 export const QuizStart = styled.button<{ disabled: boolean }>`
@@ -77,4 +92,21 @@ export const QuizStart = styled.button<{ disabled: boolean }>`
   border-radius: 10px;
   background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
   color: white;
+  font-size: 1.4rem;
+`;
+
+export const QuizMenu = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+
+  & button {
+    width: 45%;
+    margin-top: 10px;
+    padding: 10px 0;
+    border-radius: 10px;
+    background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+    color: white;
+    font-size: 1.4rem;
+  }
 `;
