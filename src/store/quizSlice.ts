@@ -10,6 +10,8 @@ interface QuizType {
   quizDifficulty: string;
   step: number;
   quiz: QuestionType[];
+  playTime: number;
+  score: number;
 }
 
 interface ModeType {
@@ -27,6 +29,8 @@ const initialState: QuizType = {
   quizDifficulty: "",
   step: 0,
   quiz: [],
+  playTime: 0,
+  score: 0,
 };
 
 export const quizSlice = createSlice({
@@ -48,14 +52,19 @@ export const quizSlice = createSlice({
     },
     collectAnswer: (state, action: PayloadAction<AnswerType>) => {
       const { index, checkAnswer } = action.payload;
-      console.log(index, checkAnswer);
       state.quiz[index].isCorrect = checkAnswer;
-
-      console.log(state.quiz);
+      if (checkAnswer) state.score += 1;
+    },
+    setPlayTime: (state, action: PayloadAction<{ playtime: number }>) => {
+      state.playTime = action.payload.playtime / 1000;
+    },
+    initScore: (state) => {
+      state.score = 0;
     },
   },
 });
 
-export const { settingQuiz, settingQuestion, collectAnswer } = quizSlice.actions;
+export const { settingQuiz, settingQuestion, collectAnswer, setPlayTime, initScore } =
+  quizSlice.actions;
 
 export default quizSlice.reducer;
