@@ -40,7 +40,6 @@ function PokemonQuizBasic({ pokemon }: Props) {
   };
 
   useEffect(() => {
-    console.log(pokemon);
     setPokemonQuestion(pokemon.slice(0, 10));
     dispatch(
       settingQuestion({
@@ -58,7 +57,6 @@ function PokemonQuizBasic({ pokemon }: Props) {
   }, [response]);
 
   useEffect(() => {
-    console.log(difficulty);
     if (step >= 10) {
       const endTime = new Date().getTime();
       dispatch(

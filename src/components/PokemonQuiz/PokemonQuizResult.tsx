@@ -20,21 +20,18 @@ function PokemonQuizResult() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    console.log(result);
     if (result.length === 0) {
       navigate("/quiz");
     } else {
       const isNew = async () => await checkNewRecord();
 
       void isNew().then((result) => {
-        console.log(result);
         if (result) setModalState(result);
       });
     }
   }, [result]);
 
   const checkNewRecord = async () => {
-    console.log(mode, difficulty);
     return await fetchRank(mode, difficulty).then((response) => {
       response = response as RankType;
 

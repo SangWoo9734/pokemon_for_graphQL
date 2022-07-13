@@ -19,8 +19,6 @@ function Modal({ updateWithNewRank }: Props) {
     }, 300);
   };
 
-  useEffect(() => console.log("hkkh"), []);
-
   return (
     <S.ModalBackground>
       <S.ModalWrapper>
