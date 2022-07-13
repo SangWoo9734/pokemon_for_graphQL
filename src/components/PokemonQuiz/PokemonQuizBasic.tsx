@@ -1,34 +1,20 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useQuery } from "@apollo/client";
 
 import * as S from "./style";
 import { useAppDispatch, useAppSelector } from "../../hooks/reduxHooks";
 import { PokemonSpecies, PokemonLanguage, PokeNmKr } from "../../assets/type";
 import { POKEMON_KR_NAME_QUERY } from "../../hooks/useGraphQL";
-import { settingQuestion } from "../../store/quizSlice";
+import { settingQuestion, setPlayTime } from "../../store/quizSlice";
 import PokemonQuestion from "./PokemonQuestion";
-import PokemonQuizResult from "./PokemonQuizResult";
-
-interface QuizResultType {
-  isCorrect: boolean;
-  pokemon: PokemonSpecies;
-}
+import { useNavigate } from "react-router-dom";
 
 interface Props {
   pokemon: PokemonSpecies[];
 }
 
-interface PokemonData {
-  pokemon_v2_pokemonspecies: PokemonSpecies[];
-}
-
 interface NameData {
   pokemon_v2_languagename_by_pk: PokemonLanguage;
-}
-
-interface ResponseType {
-  loading: boolean;
-  data: undefined | PokemonData;
 }
 
 function PokemonQuizBasic({ pokemon }: Props) {
@@ -39,21 +25,22 @@ function PokemonQuizBasic({ pokemon }: Props) {
   const [selector, setSelector] = useState<string[]>([]);
   const [answer, setAnswer] = useState<string>("");
   const [step, setStep] = useState<number>(0);
+  const [startTime] = useState<Date>(new Date());
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
 
-  const shuffle = (arr: PokemonSpecies[] | string[]) => {
+  const shuffle = (arr: string[]) => {
     for (let i = arr.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
 
-      const temp = arr[i];
-      arr[i] = arr[j];
-      arr[j] = temp;
+      [arr[i], arr[j]] = [arr[j], arr[i]];
     }
 
     return arr;
   };
 
   useEffect(() => {
+    console.log(pokemon);
     setPokemonQuestion(pokemon.slice(0, 10));
     dispatch(
       settingQuestion({
@@ -71,17 +58,30 @@ function PokemonQuizBasic({ pokemon }: Props) {
   }, [response]);
 
   useEffect(() => {
+    console.log(difficulty);
+    if (step >= 10) {
+      const endTime = new Date().getTime();
+      dispatch(
+        setPlayTime({
+          playtime: endTime - startTime.getTime(),
+        }),
+      );
+      navigate("/quiz/result");
+    }
     if (pokemonQuestion.length > 0 && step < 10) {
-      console.log(pokemonQuestion);
       const questionSelector: string[] = [];
-      [0, 0, 0].forEach(() => {
-        const nameIndex = Math.floor(Math.random() * 151);
-        console.log(nameIndex);
-        if (difficulty === "Hard") {
-          questionSelector.push(
-            pokemonQuestion.find((element) => element.pokemon_v2_pokemons[0].id === nameIndex)
-              ?.pokemon_v2_pokemons[0].name as string,
-          );
+      const answerIndex = [0, 0, 0];
+      answerIndex.forEach((value, index) => {
+        let nameIndex = 0;
+        do {
+          nameIndex = Math.floor(Math.random() * 151 + 1);
+        } while (nameIndex == pokemonQuestion[step].id);
+
+        answerIndex[index] = nameIndex;
+
+        if (difficulty === "hard") {
+          const poke = pokemon.find((element) => element.pokemon_v2_pokemons[0].id === nameIndex);
+          questionSelector.push(poke?.pokemon_v2_pokemons[0].name as string);
         } else {
           questionSelector.push(
             pokemonNM.find((element) => element.pokemon_species_id === nameIndex)?.name as string,
@@ -90,45 +90,34 @@ function PokemonQuizBasic({ pokemon }: Props) {
       });
 
       const answerName =
-        difficulty === "Hard"
+        difficulty === "hard"
           ? (pokemonQuestion.find((element) => element.id === pokemonQuestion[step].id)
               ?.pokemon_v2_pokemons[0].name as string)
           : (pokemonNM.find((element) => element.pokemon_species_id === pokemonQuestion[step].id)
               ?.name as string);
 
       questionSelector.push(answerName);
-      console.log(questionSelector);
-      console.log(shuffle(questionSelector) as string[]);
       setAnswer(answerName);
-      setSelector(shuffle(questionSelector) as string[]);
+      setSelector(shuffle(questionSelector));
     }
   }, [pokemonQuestion, step]);
-
   return (
     <S.QuizWrapper>
-      <S.QuizInnerWrapper>
-        {pokemonQuestion.length > 0 &&
-          pokemonQuestion.map((question, index) => {
-            return (
-              step === index && (
-                <div key={index}>
-                  <S.QuizHeader>
-                    <div>BASIC MODE</div>
-                    <div>{step + 1}/ 10</div>
-                  </S.QuizHeader>
-                  <PokemonQuestion
-                    question={question}
-                    answer={answer}
-                    selector={selector}
-                    step={step}
-                    setStep={setStep}
-                  />
-                </div>
-              )
-            );
-          })}
-        {step > 9 && <PokemonQuizResult />}
-      </S.QuizInnerWrapper>
+      {pokemonQuestion.length > 0 && step <= 9 && (
+        <S.QuizInnerWrapper>
+          <S.QuizHeader>
+            <div>BASIC MODE</div>
+            <div>{step + 1}/ 10</div>
+          </S.QuizHeader>
+          <PokemonQuestion
+            question={pokemonQuestion[step]}
+            answer={answer}
+            selector={selector}
+            step={step}
+            setStep={setStep}
+          />
+        </S.QuizInnerWrapper>
+      )}
     </S.QuizWrapper>
   );
 }

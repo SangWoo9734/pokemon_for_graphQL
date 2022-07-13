@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 
 import * as S from "./style";
 import { PokemonSpecies } from "../../assets/type";
@@ -14,49 +14,37 @@ interface Props {
 }
 
 function PokemonQuestion({ question, answer, selector, step, setStep }: Props) {
-  const [selected, setSelected] = useState<number>(5);
   const mode = useAppSelector((state) => state.quiz.quizMode);
   const difficulty = useAppSelector((state) => state.quiz.quizDifficulty);
   const dispatch = useAppDispatch();
 
+  const checked = (name: string) => {
+    dispatch(
+      collectAnswer({
+        index: step,
+        checkAnswer: answer === name,
+      }),
+    );
+    mode === "basic" ? setStep(step + 1) : setStep(answer === name ? step + 1 : -1);
+  };
+
   return (
     <S.QuizContent>
-      <S.QuizImage isEasy={difficulty === "Easy"}>
+      <S.QuizImage isEasy={difficulty === "easy"}>
         <img
           src={`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${question.id}.png`}
-          alt=""
+          alt="quiz-question"
         />
       </S.QuizImage>
       <S.QuizAnswer>
-        {selector.map((name, index) => {
-          console.log(answer, name);
-          return (
-            <S.QuizSelector
-              key={index}
-              selected={index === selected}
-              onClick={() => {
-                setSelected(index);
-                dispatch(
-                  collectAnswer({
-                    index: step,
-                    checkAnswer: answer === name,
-                  }),
-                );
-                setTimeout(() => {
-                  if (mode === "basic") {
-                    setStep(step + 1);
-                    setSelected(5);
-                  } else {
-                    setStep(answer === name ? step + 1 : -1);
-                    setSelected(5);
-                  }
-                }, 500);
-              }}
-            >
-              {name}
-            </S.QuizSelector>
-          );
-        })}
+        {selector.length &&
+          selector.map((name, index) => {
+            return (
+              <S.QuizSelector key={index} onClick={() => checked(name)}>
+                {name}
+              </S.QuizSelector>
+            );
+          })}
       </S.QuizAnswer>
     </S.QuizContent>
   );

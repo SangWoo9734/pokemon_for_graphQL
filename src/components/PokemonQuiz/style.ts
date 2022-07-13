@@ -37,12 +37,17 @@ export const QuizAnswer = styled.div`
   grid-template-columns: 1fr 1fr;
   grid-gap: 10px;
 `;
-export const QuizSelector = styled.button<{ selected: boolean }>`
+export const QuizSelector = styled.button`
   padding: 15px 0;
-  border: 2px solid ${({ selected }) => (selected ? "#ffaa00" : "#000000")};
-  background: ${({ selected }) => (selected ? "#ffaa0040" : "#ffffff")};
+  border: 2px solid #000000;
+  background: #ffffff;
   border-radius: 10px;
   text-align: center;
+
+  &:active {
+    background: #ffaa0040;
+    border-color: #ffaa00;
+  }
 `;
 export const QuizIndicatior = styled.div`
   margin-top: 15px;
@@ -81,10 +86,12 @@ export const QuizResultButton = styled.div`
   display: flex;
   justify-content: space-evenly;
 
-  & button {
+  & * {
     width: 30%;
     padding: 5px;
     border: 1px solid black;
     border-radius: 5px;
+    text-align: center;
+    box-shadow: 0 0 10px 0 #9f9f9f;
   }
 `;
