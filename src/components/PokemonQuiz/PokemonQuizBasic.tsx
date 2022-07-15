@@ -7,6 +7,7 @@ import { PokemonSpecies, PokemonLanguage, PokeNmKr } from "../../assets/type";
 import { POKEMON_KR_NAME_QUERY } from "../../hooks/useGraphQL";
 import { settingQuestion, setPlayTime } from "../../store/quizSlice";
 import PokemonQuestion from "./PokemonQuestion";
+import Loading from "../Loading";
 import { useNavigate } from "react-router-dom";
 
 interface Props {
@@ -21,6 +22,7 @@ function PokemonQuizBasic({ pokemon }: Props) {
   const response = useQuery(POKEMON_KR_NAME_QUERY);
   const difficulty = useAppSelector((state) => state.quiz.quizDifficulty);
   const [pokemonQuestion, setPokemonQuestion] = useState<PokemonSpecies[]>([]);
+  const [pokemonImage, setPokemonImage] = useState<HTMLImageElement[]>([]);
   const [pokemonNM, setPokemonNM] = useState<PokeNmKr[]>([]);
   const [selector, setSelector] = useState<string[]>([]);
   const [answer, setAnswer] = useState<string>("");
@@ -40,12 +42,22 @@ function PokemonQuizBasic({ pokemon }: Props) {
   };
 
   useEffect(() => {
-    setPokemonQuestion(pokemon.slice(0, 10));
+    const pokemonSlice = pokemon.slice(0, 10);
+    setPokemonQuestion(pokemonSlice);
     dispatch(
       settingQuestion({
         questions: pokemon.slice(0, 10),
       }),
     );
+
+    const imageList: HTMLImageElement[] = [];
+    pokemonSlice.forEach((question) => {
+      const image = new Image();
+      image.src = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${question.id}.png`;
+      imageList.push(image);
+    });
+
+    setPokemonImage(imageList);
   }, [pokemon]);
 
   useEffect(() => {
@@ -99,22 +111,27 @@ function PokemonQuizBasic({ pokemon }: Props) {
       setSelector(shuffle(questionSelector));
     }
   }, [pokemonQuestion, step]);
+
   return (
     <S.QuizWrapper>
-      {pokemonQuestion.length > 0 && step <= 9 && (
-        <S.QuizInnerWrapper>
-          <S.QuizHeader>
-            <div>BASIC MODE</div>
-            <div>{step + 1}/ 10</div>
-          </S.QuizHeader>
-          <PokemonQuestion
-            question={pokemonQuestion[step]}
-            answer={answer}
-            selector={selector}
-            step={step}
-            setStep={setStep}
-          />
-        </S.QuizInnerWrapper>
+      {pokemonQuestion.length * pokemonImage.length > 0 ? (
+        step <= 9 && (
+          <S.QuizInnerWrapper>
+            <S.QuizHeader>
+              <div>BASIC MODE</div>
+              <div>{step + 1}/ 10</div>
+            </S.QuizHeader>
+            <PokemonQuestion
+              image={pokemonImage[step]}
+              answer={answer}
+              selector={selector}
+              step={step}
+              setStep={setStep}
+            />
+          </S.QuizInnerWrapper>
+        )
+      ) : (
+        <Loading />
       )}
     </S.QuizWrapper>
   );

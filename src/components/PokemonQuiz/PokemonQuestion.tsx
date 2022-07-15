@@ -1,21 +1,21 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 
 import * as S from "./style";
-import { PokemonSpecies } from "../../assets/type";
 import { useAppSelector, useAppDispatch } from "../../hooks/reduxHooks";
 import { collectAnswer } from "../../store/quizSlice";
 
 interface Props {
-  question: PokemonSpecies;
+  image: HTMLImageElement;
   answer: string;
   selector: string[];
   step: number;
   setStep: React.Dispatch<React.SetStateAction<number>>;
 }
 
-function PokemonQuestion({ question, answer, selector, step, setStep }: Props) {
+function PokemonQuestion({ image, answer, selector, step, setStep }: Props) {
   const mode = useAppSelector((state) => state.quiz.quizMode);
   const difficulty = useAppSelector((state) => state.quiz.quizDifficulty);
+  const divRef = useRef<HTMLDivElement>(null);
   const dispatch = useAppDispatch();
 
   const checked = (name: string) => {
@@ -28,16 +28,19 @@ function PokemonQuestion({ question, answer, selector, step, setStep }: Props) {
     mode === "basic" ? setStep(step + 1) : setStep(answer === name ? step + 1 : -1);
   };
 
+  useEffect(() => {
+    if (divRef.current?.children.length != 0)
+      divRef.current?.removeChild(divRef.current?.children[0]);
+    if (image) divRef.current?.appendChild(image);
+  }, [image]);
+
+  useEffect(() => console.log(selector), []);
+
   return (
     <S.QuizContent>
-      <S.QuizImage isEasy={difficulty === "easy"}>
-        <img
-          src={`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${question.id}.png`}
-          alt="quiz-question"
-        />
-      </S.QuizImage>
+      <S.QuizImage isEasy={difficulty === "easy"} ref={divRef}></S.QuizImage>
       <S.QuizAnswer>
-        {selector.length &&
+        {selector.length > 0 &&
           selector.map((name, index) => {
             return (
               <S.QuizSelector key={index} onClick={() => checked(name)}>

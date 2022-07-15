@@ -8,6 +8,7 @@ import { POKEMON_KR_NAME_QUERY } from "../../hooks/useGraphQL";
 import PokemonQuestion from "./PokemonQuestion";
 import { settingQuestion, setPlayTime } from "../../store/quizSlice";
 import { useNavigate } from "react-router-dom";
+import Loading from "../Loading";
 
 interface Props {
   pokemon: PokemonSpecies[];
@@ -20,6 +21,7 @@ function PokemonQuizUnlimit({ pokemon }: Props) {
   const response = useQuery(POKEMON_KR_NAME_QUERY);
   const difficulty = useAppSelector((state) => state.quiz.quizDifficulty);
   const [pokemonNM, setPokemonNM] = useState<PokeNmKr[]>([]);
+  const [pokemonImage, setPokemonImage] = useState<HTMLImageElement[]>([]);
   const [selector, setSelector] = useState<string[]>([]);
   const [answer, setAnswer] = useState<string>("");
   const [step, setStep] = useState<number>(0);
@@ -43,6 +45,15 @@ function PokemonQuizUnlimit({ pokemon }: Props) {
         questions: pokemon,
       }),
     );
+
+    const imageList: HTMLImageElement[] = [];
+    pokemon.forEach((question) => {
+      const image = new Image();
+      image.src = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${question.id}.png`;
+      imageList.push(image);
+    });
+
+    setPokemonImage(imageList);
   }, [pokemon]);
 
   useEffect(() => {
@@ -102,7 +113,7 @@ function PokemonQuizUnlimit({ pokemon }: Props) {
   return (
     <S.QuizWrapper>
       <S.QuizInnerWrapper>
-        {pokemon.length > 0 &&
+        {pokemon.length * pokemonImage.length > 0 ? (
           pokemon.map((question, index) => {
             return (
               step === index && (
@@ -112,7 +123,7 @@ function PokemonQuizUnlimit({ pokemon }: Props) {
                     <div>{step} COMBO!!</div>
                   </S.QuizHeader>
                   <PokemonQuestion
-                    question={question}
+                    image={pokemonImage[step]}
                     answer={answer}
                     selector={selector}
                     step={step}
@@ -121,7 +132,10 @@ function PokemonQuizUnlimit({ pokemon }: Props) {
                 </div>
               )
             );
-          })}
+          })
+        ) : (
+          <Loading />
+        )}
       </S.QuizInnerWrapper>
     </S.QuizWrapper>
   );
