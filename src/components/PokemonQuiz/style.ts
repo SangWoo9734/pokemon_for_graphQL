@@ -31,7 +31,10 @@ export const QuizHeader = styled.div`
   justify-content: space-evenly;
   font-size: 1.7rem;
 `;
-export const QuizContent = styled.div``;
+export const QuizContent = styled.div`
+  padding: 15px;
+`;
+
 export const QuizAnswer = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr;

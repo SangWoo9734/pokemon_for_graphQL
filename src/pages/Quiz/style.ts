@@ -3,7 +3,6 @@ import styled from "styled-components";
 export const QuizWrapper = styled.div`
   position: relative;
   max-width: 900px;
-  height: calc(100vh - 30px);
   margin: auto;
 `;
 
