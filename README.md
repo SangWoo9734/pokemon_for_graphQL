@@ -21,14 +21,18 @@
 
 ## 프로젝트 시작
 
-#### `npm install`
+#### `cd client && npm install`
 
-프로젝트와 관련된 의존성을 모두 설치합니다.
+client 관련 의존성을 모두 설치합니다.
+
+#### `cd server && npm install`
+
+express server 관련 의존성을 모두 설치합니다.
 
 #### `npm start`
 
 개발 모드로 앱을 시작할 수 있습니다.
-명령어 입력 후, [http://localhost:3000](http://localhost:3000)를 입력하여 브라우저에서 확인 가능합니다.
+명령어 입력 후, [http://localhost:4500](http://localhost:4500)를 입력하여 브라우저에서 확인 가능합니다.
 
 ## GraphQL
 - 기존의 REST API의 단점을 보완한 데이터 전송 형식
