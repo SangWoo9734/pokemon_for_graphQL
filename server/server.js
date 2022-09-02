@@ -1,10 +1,10 @@
 require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
+const path = require("path");
 
 const app = express();
 const bodyParser = require("body-parser");
-const { type } = require("os");
 
 const { PORT, USER_ID, PASSWORD } = process.env;
 
@@ -29,7 +29,12 @@ MongoClient.connect(
 app.use(express.json());
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true }));
-// app.use(express.static(path.join(__dirname, '..', 'client', 'build')));
+console.log(__dirname);
+app.use(express.static(path.join(__dirname, "../build")));
+
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "../build/index.html"));
+});
 
 app.get("/rank/ranking", async (req, res) => {
   const { type, difficulty } = req.query;
