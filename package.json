@@ -3,12 +3,16 @@
   "version": "1.0.0",
   "description": "",
   "scripts": {
-    "start": "cd server && npm start",
-    "heroku-postbuild": "cd client && npm install && npm run build"
+    "start": "npm run dev:server",
+    "build": "cd client && npm run build",
+    "heroku-postbuild": "cd client && npm install && npm run build",
+    "dev:server": "cd server && npm start",
+    "dev:client": "cd client && npm start"
   },
   "author": "SangWoo Park",
   "license": "ISC",
   "dependencies": {
-    "concurrently": "^7.3.0"
+    "concurrently": "^7.3.0",
+    "react-scripts": "^5.0.1"
   }
 }
