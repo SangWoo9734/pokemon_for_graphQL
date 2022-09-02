@@ -1,29 +1,27 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useQuery } from "@apollo/client";
 
 import * as S from "./style";
 import { useAppDispatch, useAppSelector } from "../../hooks/reduxHooks";
 import { PokemonSpecies, PokemonLanguage, PokeNmKr } from "../../assets/type";
 import { POKEMON_KR_NAME_QUERY } from "../../hooks/useGraphQL";
-import { settingQuestion, setPlayTime } from "../../store/quizSlice";
 import PokemonQuestion from "./PokemonQuestion";
-import Loading from "../Loading";
+import { settingQuestion, setPlayTime } from "../../store/quizSlice";
 import { useNavigate } from "react-router-dom";
+import Loading from "../Loading";
 
 interface Props {
   pokemon: PokemonSpecies[];
 }
-
 interface NameData {
   pokemon_v2_languagename_by_pk: PokemonLanguage;
 }
 
-function PokemonQuizBasic({ pokemon }: Props) {
+function PokemonQuizUnlimit({ pokemon }: Props) {
   const response = useQuery(POKEMON_KR_NAME_QUERY);
   const difficulty = useAppSelector((state) => state.quiz.quizDifficulty);
-  const [pokemonQuestion, setPokemonQuestion] = useState<PokemonSpecies[]>([]);
-  const [pokemonImage, setPokemonImage] = useState<HTMLImageElement[]>([]);
   const [pokemonNM, setPokemonNM] = useState<PokeNmKr[]>([]);
+  const [pokemonImage, setPokemonImage] = useState<HTMLImageElement[]>([]);
   const [selector, setSelector] = useState<string[]>([]);
   const [answer, setAnswer] = useState<string>("");
   const [step, setStep] = useState<number>(0);
@@ -31,7 +29,7 @@ function PokemonQuizBasic({ pokemon }: Props) {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
-  const shuffle = (arr: string[]) => {
+  const shuffle = (arr: PokemonSpecies[] | string[]) => {
     for (let i = arr.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
 
@@ -42,16 +40,14 @@ function PokemonQuizBasic({ pokemon }: Props) {
   };
 
   useEffect(() => {
-    const pokemonSlice = pokemon.slice(0, 10);
-    setPokemonQuestion(pokemonSlice);
     dispatch(
       settingQuestion({
-        questions: pokemon.slice(0, 10),
+        questions: pokemon,
       }),
     );
 
     const imageList: HTMLImageElement[] = [];
-    pokemonSlice.forEach((question) => {
+    pokemon.forEach((question) => {
       const image = new Image();
       image.src = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${question.id}.png`;
       imageList.push(image);
@@ -69,7 +65,7 @@ function PokemonQuizBasic({ pokemon }: Props) {
   }, [response]);
 
   useEffect(() => {
-    if (step >= 10) {
+    if (step < 0) {
       const endTime = new Date().getTime();
       dispatch(
         setPlayTime({
@@ -78,20 +74,22 @@ function PokemonQuizBasic({ pokemon }: Props) {
       );
       navigate("/quiz/result");
     }
-    if (pokemonQuestion.length > 0 && step < 10) {
+    if (pokemon.length > 0 && step > -1) {
       const questionSelector: string[] = [];
       const answerIndex = [0, 0, 0];
       answerIndex.forEach((value, index) => {
         let nameIndex = 0;
         do {
           nameIndex = Math.floor(Math.random() * 151 + 1);
-        } while (nameIndex == pokemonQuestion[step].id);
+        } while (answerIndex.find((value) => value == nameIndex));
 
         answerIndex[index] = nameIndex;
 
         if (difficulty === "hard") {
-          const poke = pokemon.find((element) => element.pokemon_v2_pokemons[0].id === nameIndex);
-          questionSelector.push(poke?.pokemon_v2_pokemons[0].name as string);
+          questionSelector.push(
+            pokemon.find((element) => element.id === nameIndex)?.pokemon_v2_pokemons[0]
+              ?.name as string,
+          );
         } else {
           questionSelector.push(
             pokemonNM.find((element) => element.pokemon_species_id === nameIndex)?.name as string,
@@ -99,42 +97,48 @@ function PokemonQuizBasic({ pokemon }: Props) {
         }
       });
 
-      const answerName =
+      const answerName: string =
         difficulty === "hard"
-          ? (pokemonQuestion.find((element) => element.id === pokemonQuestion[step].id)
-              ?.pokemon_v2_pokemons[0].name as string)
-          : (pokemonNM.find((element) => element.pokemon_species_id === pokemonQuestion[step].id)
-              ?.name as string);
+          ? pokemon[step].pokemon_v2_pokemons[0].name
+          : (pokemonNM.find(
+              (element) => element.pokemon_species_id === pokemon[step].pokemon_v2_pokemons[0].id,
+            )?.name as string);
 
       questionSelector.push(answerName);
       setAnswer(answerName);
-      setSelector(shuffle(questionSelector));
+      setSelector(shuffle(questionSelector) as string[]);
     }
-  }, [pokemonQuestion, step]);
+  }, [pokemon, step]);
 
   return (
     <S.QuizWrapper>
-      {pokemonQuestion.length * pokemonImage.length > 0 ? (
-        step <= 9 && (
-          <S.QuizInnerWrapper>
-            <S.QuizHeader>
-              <div>BASIC MODE</div>
-              <div>{step + 1}/ 10</div>
-            </S.QuizHeader>
-            <PokemonQuestion
-              image={pokemonImage[step]}
-              answer={answer}
-              selector={selector}
-              step={step}
-              setStep={setStep}
-            />
-          </S.QuizInnerWrapper>
-        )
-      ) : (
-        <Loading />
-      )}
+      <S.QuizInnerWrapper>
+        {pokemon.length * pokemonImage.length > 0 ? (
+          pokemon.map((question, index) => {
+            return (
+              step === index && (
+                <div key={index}>
+                  <S.QuizHeader>
+                    <div>UNLIMIT MODE</div>
+                    <div>{step} COMBO!!</div>
+                  </S.QuizHeader>
+                  <PokemonQuestion
+                    image={pokemonImage[step]}
+                    answer={answer}
+                    selector={selector}
+                    step={step}
+                    setStep={setStep}
+                  />
+                </div>
+              )
+            );
+          })
+        ) : (
+          <Loading />
+        )}
+      </S.QuizInnerWrapper>
     </S.QuizWrapper>
   );
 }
 
-export default PokemonQuizBasic;
+export default PokemonQuizUnlimit;
