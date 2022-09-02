@@ -3,9 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "scripts": {
-    "start": "concurrently \" npm run server \" \"npm run client \" ",
-    "server": "cd backend && npm start",
-    "client": "cd client && npm start",
+    "start": "cd server && npm start",
     "heroku-postbuild": "cd client && npm install && npm run build"
   },
   "author": "SangWoo Park",
