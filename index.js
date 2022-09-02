@@ -24,16 +24,15 @@ MongoClient.connect(
     });
   },
 );
-// body-parser : 클라이언트 POST request data의 body로부터 파라미터를 편리하게 추출
 
 app.use(express.json());
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true }));
 console.log(__dirname);
-app.use(express.static(path.join(__dirname, "../client/build")));
+app.use(express.static(path.join(__dirname, "./client/build")));
 
 app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "../client/build/index.html"));
+  res.sendFile(path.join(__dirname, "./client/build/index.html"));
 });
 
 app.get("/rank/ranking", async (req, res) => {
