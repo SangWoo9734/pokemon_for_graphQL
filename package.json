@@ -5,12 +5,7 @@
   "main": "index.js",
   "scripts": {
     "heroku-prebuild": "cd client && npm ci && npm run build && mv build ../server",
-    "start": "cd server && npm ci && nodemon index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/SangWoo9734/pokemon_for_graphQL.git"
+    "start": "cd server && npm ci && nodemon index.js"
   },
   "author": "SangWoo Park",
   "license": "ISC",
