@@ -28,10 +28,10 @@ MongoClient.connect(
 app.use(express.json());
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(express.static(path.join(__dirname, "./build")));
+app.use(express.static(path.join(__dirname, "/build")));
 
 app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "./build/index.html"));
+  res.sendFile(path.join(__dirname, "/build/index.html"));
 });
 
 app.get("/rank/ranking", async (req, res) => {
@@ -62,5 +62,5 @@ app.put("/rank/update", async (req, res) => {
 });
 
 app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname, "../client/build/index.html"));
+  res.sendFile(path.join(__dirname, "/build/index.html"));
 });
