@@ -4,8 +4,10 @@
   "description": "#### 🕹 [배포 페이지 바로가기](https://pokemon-for-graph-ql.vercel.app/)",
   "main": "index.js",
   "scripts": {
-    "heroku-prebuild": "cd client && npm ci && npm run build && mv build ../server",
-    "start": "cd server && npm ci && nodemon index.js"
+    "client-build": "cd client && npm ci && npm run build && cd ../",
+    "server-build": "cd server && npm ci && cd ../",
+    "heroku-prebuild": "npm run client-build && npm run server-build && mv ./client/build ./server/build",
+    "start": "cd server && nodemon index.js"
   },
   "author": "SangWoo Park",
   "license": "ISC",
